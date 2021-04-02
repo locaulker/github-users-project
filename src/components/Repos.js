@@ -7,48 +7,62 @@ const Repos = () => {
   const { repos } = React.useContext(GithubContext)
 
   // calculate the languages
-  let languages = repos.reduce((total, item) => {
-    const { language } = item
+  const languages = repos.reduce((total, item) => {
+    const { language, stargazers_count } = item
 
     if (!language) return total
     if (!total[language]) {
-      total[language] = { label: language, value: 1 }
+      total[language] = { label: language, value: 1, stars: stargazers_count }
     } else {
       total[language] = {
         ...total[language],
         value: total[language].value + 1,
+        stars: total[language].stars + stargazers_count
       }
     }
     return total
   }, {})
 
-  // get array of languages from the object
-  languages = Object.values(languages)
+  // get array of mostused languages from the object
+  const mostUsed = Object.values(languages)
     .sort((a, b) => {
       return b.value - a.value
     })
     .slice(0, 5)
 
+  // get array of mostPopular languages from the object
+  const mostPopular = Object.values(languages)
+    .sort((a, b) => {
+      return b.stars - a.stars
+    })
+    .map(item => {
+      return { ...item, value: item.stars }
+    })
+    .slice(0, 5)
+
   // dummy data for the chart
-  // const chartData = [
-  //   {
-  //     label: "HTML",
-  //     value: "13",
-  //   },
-  //   {
-  //     label: "CSS",
-  //     value: "160",
-  //   },
-  //   {
-  //     label: "JavaScript",
-  //     value: "80",
-  //   },
-  // ]
+  const chartData = [
+    {
+      label: "HTML",
+      value: "13"
+    },
+    {
+      label: "CSS",
+      value: "160"
+    },
+    {
+      label: "JavaScript",
+      value: "80"
+    }
+  ]
 
   return (
     <section className="section">
       <Wrapper className="section-center">
-        <Pie3D data={languages} />
+        <Pie3D data={mostUsed} />
+        <div></div>
+        <Doughnut2D data={mostPopular} />
+        <div></div>
       </Wrapper>
     </section>
   )
