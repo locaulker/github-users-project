@@ -16,7 +16,7 @@ const GithubProvider = ({ children }) => {
 
   // requests, loading
   const [requests, setRequests] = useState(0)
-  const [loading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   // errors: no user or no remaining requests
   const [error, setError] = useState({ show: false, msg: "" })
@@ -24,7 +24,7 @@ const GithubProvider = ({ children }) => {
   // executing a search
   const searchGithubUser = async user => {
     toggleError()
-    // setLoading(true)
+    setIsLoading(true)
     const response = await axios(`${rootUrl}/users/${user}`).catch(err =>
       console.log(err)
     )
@@ -35,6 +35,8 @@ const GithubProvider = ({ children }) => {
     } else {
       toggleError(true, "Sorry! No user found with that username!")
     }
+    checkRequests()
+    setIsLoading(false)
   }
 
   // check rate limit
@@ -72,6 +74,7 @@ const GithubProvider = ({ children }) => {
         requests,
         error,
         searchGithubUser,
+        isLoading,
       }}
     >
       {children}
